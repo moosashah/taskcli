@@ -28,14 +28,14 @@ what you need to do:
     - [x] get tasks
 
 ### Making a CLI with Cobra
-- [ ] add CLI
-    - [ ] add task
-    - [ ] delete task
-    - [ ] edit task
-    - [ ] get tasks
+- [x] add CLI
+    - [x] add task
+    - [x] delete task
+    - [x] edit task
+    - [x] get tasks
 
 ### Add a little... *Je ne sais quoi*
-- [ ] print to table layout with [Lip Gloss][lipgloss]
+- [x] print to table layout with [Lip Gloss][lipgloss]
 - [ ] print to Kanban layout with [Lip Gloss][lipgloss]
 
 ## Project Layout

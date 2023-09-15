@@ -3,7 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	"os"
+	"path/filepath"
 	"reflect"
 	"time"
 
@@ -133,16 +134,26 @@ func (t *taskDB) getTasks() ([]task, error) {
 	return tasks, nil
 }
 
-func initTodosDB(path string) (*taskDB, error) {
-	db, err := sql.Open("sqlite3", path)
+func initTaskDir(path string) error {
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return os.Mkdir(path, 0o770)
+		}
+		return err
+	}
+	return nil
+}
+
+func initTasksDB(path string) (*taskDB, error) {
+	db, err := sql.Open("sqlite3", filepath.Join(path, "tasks.db"))
 	if err != nil {
 		return nil, err
 	}
 	t := taskDB{db, path}
-	dbErr := t.createTable()
-	if dbErr != nil {
-		log.Fatalf("could not initialize db: %+v", dbErr)
+	if !t.taskTableExists() {
+		if err := t.createTable(); err != nil {
+			return nil, err
+		}
 	}
-	fmt.Printf("db setup: %t\n", t.taskTableExists())
 	return &t, nil
 }
