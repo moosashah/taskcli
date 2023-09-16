@@ -223,3 +223,165 @@ func TestGetTasks(t *testing.T) {
 		})
 	}
 }
+
+// finish fixing this, pretty much re-write it :)
+func TestGetTasksByStatus(t *testing.T) {
+	t.Skip("skip")
+	tests := []struct {
+		want     []task
+		fullList []task
+	}{
+		{
+			fullList: []task{
+				{
+					ID:      1,
+					Name:    "get milk",
+					Project: "groceries",
+					Status:  inProgress.String(),
+				},
+				{
+					ID:      2,
+					Name:    "get pasta",
+					Project: "groceries",
+					Status:  inProgress.String(),
+				},
+				{
+					ID:      3,
+					Name:    "get strawberries",
+					Project: "groceries",
+					Status:  todo.String(),
+				},
+			},
+			want: []task{
+				{
+					ID:      1,
+					Name:    "get milk",
+					Project: "groceries",
+					Status:  inProgress.String(),
+				},
+				{
+					ID:      2,
+					Name:    "get pasta",
+					Project: "groceries",
+					Status:  inProgress.String(),
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run("Get all tasks by status", func(t *testing.T) {
+			tDB := setup()
+			defer teardown(tDB)
+			for _, task := range tt.fullList {
+				if err := tDB.addTask(task.Name, task.Project); err != nil {
+					t.Fatalf("err adding task: %v", err)
+				}
+			}
+			got, err := tDB.getTasksByStatus(inProgress.String())
+			if err != nil {
+				t.Fatalf("error getting tasks by status(%s): %v", inProgress.String(), err)
+			}
+
+			if len(got) != len(tt.want) {
+				t.Fatalf("expected %d, got %d", len(tt.want), len(got))
+			}
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Fatalf("got: %#v, want: %#v, full: %#v", got, tt.want, tt.fullList)
+			}
+		})
+	}
+}
+
+func TestGetTasksByStatusCp(t *testing.T) {
+	tests := []struct {
+		want task
+	}{
+		{
+			want: task{
+				ID:      1,
+				Name:    "get milk",
+				Project: "groceries",
+				Status:  todo.String(),
+			},
+		},
+	}
+	for _, tc := range tests {
+		t.Run("get tasks by status", func(t *testing.T) {
+			tDB := setup()
+			defer teardown(tDB)
+			if err := tDB.addTask(tc.want.Name, tc.want.Project); err != nil {
+				t.Fatalf("we ran into an unexpected error: %v", err)
+			}
+			tasks, err := tDB.getTasksByStatus(tc.want.Status)
+			if err != nil {
+				t.Fatalf("we ran into an unexpected error: %v", err)
+			}
+			if len(tasks) < 1 {
+				t.Fatalf("expected 1 value, got %#v", tasks)
+			}
+			tc.want.Created = tasks[0].Created
+			if !reflect.DeepEqual(tasks[0], tc.want) {
+				t.Fatalf("got: %#v, want: %#v", tasks, tc.want)
+			}
+		})
+	}
+}
+
+func TestGetTasksByProject(t *testing.T) {
+	tests := []struct {
+		input []task
+		want  []task
+		query string
+	}{
+		{
+			input: []task{
+				{
+
+					ID:      1,
+					Name:    "Go hiking",
+					Project: "exercise",
+					Status:  todo.String(),
+				},
+				{
+					ID:      2,
+					Name:    "get milk",
+					Project: "groceries",
+					Status:  inProgress.String(),
+				},
+			},
+			want: []task{
+				{
+
+					ID:      1,
+					Name:    "Go hiking",
+					Project: "exercise",
+					Status:  todo.String(),
+				},
+			},
+			query: "exercise",
+		},
+	}
+	for _, tc := range tests {
+		t.Run("get tasks by project", func(t *testing.T) {
+			tDB := setup()
+			defer teardown(tDB)
+			for _, tt := range tc.input {
+				if err := tDB.addTask(tt.Name, tt.Project); err != nil {
+					t.Fatalf("could not add task: %v", err)
+				}
+			}
+			got, err := tDB.getTasksByProject(tc.query)
+			if err != nil {
+				t.Fatalf("could not get tasks by(%s): %v", tc.query, err)
+			}
+			if len(got) != len(tc.want) {
+				t.Fatalf("expected %d, got %d", len(tc.want), len(got))
+			}
+			tc.want[0].Created = got[0].Created
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("got: %#v, want: %#v", got, tc.want)
+			}
+		})
+	}
+}

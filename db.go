@@ -134,6 +134,49 @@ func (t *taskDB) getTasks() ([]task, error) {
 	return tasks, nil
 }
 
+func (t *taskDB) getTasksByStatus(status string) ([]task, error) {
+	var tasks []task
+	rows, err := t.db.Query(`SELECT * FROM tasks WHERE status = $1`, status)
+	if err != nil {
+		return tasks, fmt.Errorf("unable to get values: %w", err)
+	}
+	for rows.Next() {
+		var task task
+		err = rows.Scan(
+			&task.ID,
+			&task.Name,
+			&task.Project,
+			&task.Status,
+			&task.Created,
+		)
+		if err != nil {
+			return tasks, err
+		}
+		tasks = append(tasks, task)
+	}
+	return tasks, err
+}
+
+func (t *taskDB) getTasksByProject(project string) ([]task, error) {
+	var tasks []task
+	rows, err := t.db.Query(`SELECT * FROM tasks WHERE project LIKE ?`, "%"+project+"%")
+	for rows.Next() {
+		var task task
+		err = rows.Scan(
+			&task.ID,
+			&task.Name,
+			&task.Project,
+			&task.Status,
+			&task.Created,
+		)
+		if err != nil {
+			return tasks, err
+		}
+		tasks = append(tasks, task)
+	}
+	return tasks, err
+}
+
 func initTaskDir(path string) error {
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {

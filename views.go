@@ -55,7 +55,7 @@ func setupTable(tasks []task) table.Model {
 	columns := []table.Column{
 		{Title: "ID", Width: calculateWidth(XS, w)},
 		{Title: "Name", Width: calculateWidth(LG, w)},
-		{Title: "Project", Width: calculateWidth(MD, w)},
+		{Title: "Project", Width: calculateWidth(SM, w)},
 		{Title: "Status", Width: calculateWidth(SM, w)},
 		{Title: "Created At", Width: calculateWidth(MD, w)},
 	}
