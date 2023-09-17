@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/charmbracelet/bubbles/list"
 	"github.com/spf13/cobra"
 )
 
