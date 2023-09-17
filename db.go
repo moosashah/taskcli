@@ -24,39 +24,6 @@ type task struct {
 	Created time.Time
 }
 
-// FilterValue implements list.Item.
-func (t task) FilterValue() string {
-	return t.Name
-}
-
-func (t task) Title() string {
-	return t.Name
-}
-
-func (t task) Description() string {
-	return t.Project
-}
-
-func (s status) Next() int {
-	if s == done {
-		return int(todo)
-	}
-
-	return int(s + 1)
-}
-
-func (s status) Prev() int {
-	if s == todo {
-		return int(done)
-	}
-
-	return int(s - 1)
-}
-
-func (s status) Int() int {
-	return int(s)
-}
-
 type status int
 
 const (

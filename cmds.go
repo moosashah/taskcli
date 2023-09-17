@@ -6,9 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/kancli"
-
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/spf13/cobra"
 )
@@ -173,46 +170,6 @@ var updateCmd = &cobra.Command{
 	},
 }
 
-var kanbanCmd = &cobra.Command{
-	Use:   "kanban",
-	Short: "Display todo list as Kanban board",
-	Args:  cobra.NoArgs,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		t, err := initTasksDB(setupPath())
-		if err != nil {
-			return err
-		}
-		defer t.db.Close()
-		todos, err := t.getTasksByStatus(todo.String())
-		if err != nil {
-			return err
-		}
-		inprog, err := t.getTasksByStatus(inProgress.String())
-		if err != nil {
-			return err
-		}
-		finished, err := t.getTasksByStatus(done.String())
-		if err != nil {
-			return err
-		}
-		todoCol := kancli.NewColumn(tasksToItems(todos), todo, true)
-		inProgCol := kancli.NewColumn(tasksToItems(inprog), inProgress, false)
-		doneCol := kancli.NewColumn(tasksToItems(finished), done, false)
-		board := kancli.NewDefaultBoard([]kancli.Column{todoCol, inProgCol, doneCol})
-		p := tea.NewProgram(board)
-		_, err = p.Run()
-		return err
-	},
-}
-
-func tasksToItems(tasks []task) []list.Item {
-	var items []list.Item
-	for _, t := range tasks {
-		items = append(items, t)
-	}
-	return items
-}
-
 func init() {
 	addCmd.Flags().StringP("project", "p", "", "specify a project for your task")
 	rootCmd.AddCommand(addCmd)
@@ -224,5 +181,4 @@ func init() {
 	updateCmd.Flags().StringP("name", "n", "", "specify a name for your task")
 	updateCmd.Flags().IntP("status", "s", int(todo), "specify a status for your task")
 	rootCmd.AddCommand(updateCmd)
-	rootCmd.AddCommand(kanbanCmd)
 }
