@@ -105,10 +105,10 @@ func TestDeleteTask(t *testing.T) {
 
 func TestUpdateTask(t *testing.T) {
 	tests := []struct {
-		old  *task
-		new  *task
-		want task
-		name string
+		old      *task
+		new      *task
+		want     task
+		testName string
 	}{
 		{
 			old: &task{
@@ -121,7 +121,6 @@ func TestUpdateTask(t *testing.T) {
 				ID:      1,
 				Name:    "get pasta",
 				Project: "groceries",
-				Status:  todo.String(),
 			},
 			want: task{
 				ID:      1,
@@ -129,7 +128,7 @@ func TestUpdateTask(t *testing.T) {
 				Project: "groceries",
 				Status:  todo.String(),
 			},
-			name: "Update name and project",
+			testName: "Update name and project",
 		},
 		{
 			old: &task{
@@ -139,10 +138,8 @@ func TestUpdateTask(t *testing.T) {
 				Status:  todo.String(),
 			},
 			new: &task{
-				ID:      1,
-				Name:    "get milk",
-				Project: "groceries",
-				Status:  inProgress.String(),
+				ID:     1,
+				Status: inProgress.String(),
 			},
 			want: task{
 				ID:      1,
@@ -150,11 +147,11 @@ func TestUpdateTask(t *testing.T) {
 				Project: "groceries",
 				Status:  inProgress.String(),
 			},
-			name: "Update status",
+			testName: "Update status",
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.testName, func(t *testing.T) {
 			tDB := setup()
 			defer teardown(tDB)
 			if err := tDB.addTask(tt.old.Name, tt.old.Project); err != nil {
