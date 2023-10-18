@@ -22,9 +22,3 @@ Here's the plan:
     - [x] delete task
     - [x] edit task
     - [x] get tasks
-
-### Add a little... *Je ne sais quoi*
-- [x] print to table layout with [Lip Gloss][lipgloss]
-- [ ] print to Kanban layout with [Lip Gloss][lipgloss]
-
-Kanban layout from tutorial had faux interactivity so need to rebuild and make it so that the data presists :) 
